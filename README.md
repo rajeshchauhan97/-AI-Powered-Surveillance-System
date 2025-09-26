@@ -1,7 +1,3 @@
-Got it 👍 You want your **README.md** to include the project architecture tree.
-Here’s a polished version of the README with the **folder structure** integrated:
-
-```markdown
 # 🎬 Movie Booking Application
 
 A backend service for managing movies, theaters, and ticket bookings, built with **FastAPI**, **SQLAlchemy**, and **PostgreSQL**.  
@@ -169,13 +165,9 @@ SECRET_KEY=your-secret-key
 
 ---
 
-## 📌 License
-
-MIT License
-
-```
 
 ---
 
 👉 Do you want me to also **fill your README with API examples (sample requests/responses for movies, bookings, theaters)** so it becomes developer-ready?
 ```
+
