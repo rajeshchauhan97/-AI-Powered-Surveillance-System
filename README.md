@@ -112,21 +112,23 @@ git log --oneline
 ## ☁️ Deploy to Heroku
 
 ```bash
-# Option 1: Use the setup script
-python setup_heroku.py
+# Check if Heroku CLI is installed
+heroku --version
 
-# Option 2: Manual Heroku setup
+# If not installed, you can deploy without it using GitHub
+# First, let's try Heroku deployment:
+
+# Create Heroku app
 heroku create movie-booking-system-algo
+
+# Add PostgreSQL database
 heroku addons:create heroku-postgresql:hobby-dev
 
 # Deploy to Heroku
+git push heroku master
+
+# If 'master' doesn't work, try:
 git push heroku main
-
-# Open the application
-heroku open
-
-# Check logs
-heroku logs --tail
 
 ---
 
