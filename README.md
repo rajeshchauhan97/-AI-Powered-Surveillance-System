@@ -1,3 +1,7 @@
+Got it 👍 You want your **README.md** to include the project architecture tree.
+Here’s a polished version of the README with the **folder structure** integrated:
+
+```markdown
 # 🎬 Movie Booking Application
 
 A backend service for managing movies, theaters, and ticket bookings, built with **FastAPI**, **SQLAlchemy**, and **PostgreSQL**.  
@@ -7,11 +11,10 @@ A backend service for managing movies, theaters, and ticket bookings, built with
 ## 🚀 Features
 - Manage Movies (CRUD operations)
 - Manage Theaters & Shows
-- Book Tickets (single & group)
-- Suggest alternative shows if seats unavailable
-- Analytics for bookings and revenue
+- Book Tickets
+- Analytics for bookings
 - API Documentation via Swagger & ReDoc
-- Docker & Railway Deployment support
+- Docker & Heroku Deployment support
 
 ---
 
@@ -66,72 +69,66 @@ movie_booking/
 git clone <repository-url>
 cd movie_booking
 python -m venv venv
-venv\Scripts\activate  # On Windows
+venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ````
-
-Test the application endpoints:
-
-```bash
-python test_fix.py
-```
-
+python test_complete_system.py
 ---
 
-## @Complete Git Setup
+##  @Complete Git Setup
 
-```bash
+# 1. Initialize git
 git init
+
+# 2. Add all files
 git add .
-git commit -m "feat: Complete Movie Booking System with all features"
-git log --oneline
-```
 
-Set your git config:
+# 3. Check status
+git 
 
-```bash
+# Set your git configuration
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+# Or if you want to set it only for this repository (remove --global)
 git config user.email "raju@sabhavath.com"
 git config user.name "Raju Sabhavath"
-```
 
----
+# 4. Make initial commit
+git commit -m "feat: Complete Movie Booking System with all features
 
-## ☁️ Deploy to Railway
+- CRUD APIs for movies, theaters, shows
+- Group booking with seat validation  
+- Alternative show suggestions
+- Concurrency control for seat booking
+- Flexible seating layouts (min 6 seats/row)
+- Analytics and revenue reporting
+- Ready for deployment"
 
-1. **Install Railway CLI** (optional): [https://railway.app/install](https://railway.app/install)
+# 5. Check log
+git log --oneline
 
-2. **Login to Railway**:
-
-```bash
-railway login
-```
-
-3. **Initialize project**:
-
-```bash
-railway init
-```
-
-4. **Connect PostgreSQL plugin** (or any database service):
+## ☁️ Deploy to Heroku
 
 ```bash
-railway add postgresql
-```
+# Check if Heroku CLI is installed
+heroku --version
 
-5. **Deploy your application**:
+# If not installed, you can deploy without it using GitHub
+# First, let's try Heroku deployment:
 
-```bash
-railway up
-```
+# Create Heroku app
+heroku create movie-booking-system-algo
 
-6. **Open deployed app**:
+# Add PostgreSQL database
+heroku addons:create heroku-postgresql:hobby-dev
 
-```bash
-railway open
-```
+# Deploy to Heroku
+git push heroku master
 
-> Railway will automatically detect your Python app and run `uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+# If 'master' doesn't work, try:
+git push heroku main
 
 ---
 
@@ -146,7 +143,7 @@ docker run -p 8000:8000 movie-booking
 
 ## 📖 API Documentation
 
-Once running locally or on Railway, access:
+Once deployed, access:
 
 * Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
 * ReDoc: [http://localhost:8000/redoc](http://localhost:8000/redoc)
@@ -154,8 +151,6 @@ Once running locally or on Railway, access:
 ---
 
 ## 🧪 Testing
-
-Run all tests using:
 
 ```bash
 pytest
@@ -173,3 +168,14 @@ SECRET_KEY=your-secret-key
 ```
 
 ---
+
+## 📌 License
+
+MIT License
+
+```
+
+---
+
+👉 Do you want me to also **fill your README with API examples (sample requests/responses for movies, bookings, theaters)** so it becomes developer-ready?
+```
