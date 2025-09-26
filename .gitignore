@@ -51,4 +51,7 @@ logs/
 
 # Heroku
 *.heroku/
-EOF
+EOF"__pycache__/" 
+"*.pyc" 
+"*.db" 
+"*.sqlite3" 

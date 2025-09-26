@@ -76,6 +76,7 @@ uvicorn app.main:app --reload
 python test_complete_system.py
 ---
 
+##  @Complete Git Setup
 
 # 1. Initialize git
 git init
@@ -84,7 +85,15 @@ git init
 git add .
 
 # 3. Check status
-git status
+git 
+
+# Set your git configuration
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+
+# Or if you want to set it only for this repository (remove --global)
+git config user.email "raju@sabhavath.com"
+git config user.name "Raju Sabhavath"
 
 # 4. Make initial commit
 git commit -m "feat: Complete Movie Booking System with all features
@@ -103,12 +112,21 @@ git log --oneline
 ## ☁️ Deploy to Heroku
 
 ```bash
-# Create Procfile
-echo "web: uvicorn app.main:app --host=0.0.0.0 --port=\$PORT" > Procfile
+# Option 1: Use the setup script
+python setup_heroku.py
 
-heroku create your-app-name
+# Option 2: Manual Heroku setup
+heroku create movie-booking-system-algo
+heroku addons:create heroku-postgresql:hobby-dev
+
+# Deploy to Heroku
 git push heroku main
-```
+
+# Open the application
+heroku open
+
+# Check logs
+heroku logs --tail
 
 ---
 
