@@ -1,9 +1,9 @@
-# app/main.py
 import os
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
+# Import your routers and database setup
 from app.routers import movies, theaters, bookings, analytics, shows
 from app.utils.database import get_db, check_database_health
 from app.models.database import create_tables
@@ -11,53 +11,54 @@ from app.models.database import create_tables
 # Create tables on startup
 create_tables()
 
-# Get port from Railway environment
+# Get port from Render environment
 PORT = int(os.environ.get("PORT", 8000))
 
 app = FastAPI(
-    title="Movie Booking System API", 
-    version="1.0.0",
-    description="Algo Bharat Assignment - Movie Ticket Booking System"
+    title="Movie Booking System API",
+    description="Algo Bharat Assignment - Complete Movie Ticket Booking System",
+    version="1.0.0"
 )
 
-# CORS middleware for frontend compatibility
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For demo purposes
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Include routers
-app.include_router(movies.router)
-app.include_router(theaters.router)
-app.include_router(shows.router)
-app.include_router(bookings.router)
-app.include_router(analytics.router)
+app.include_router(movies.router, prefix="/api/v1", tags=["movies"])
+app.include_router(theaters.router, prefix="/api/v1", tags=["theaters"])
+app.include_router(shows.router, prefix="/api/v1", tags=["shows"])
+app.include_router(bookings.router, prefix="/api/v1", tags=["bookings"])
+app.include_router(analytics.router, prefix="/api/v1", tags=["analytics"])
 
 @app.get("/")
-def read_root():
+def root():
     return {
         "message": "Movie Booking System API - Algo Bharat Assignment",
         "status": "live",
+        "deployed_on": "Render.com",
         "docs": "/docs",
         "health": "/health"
     }
 
 @app.get("/health")
 def health_check(db: Session = Depends(get_db)):
-    db_healthy, db_error = check_database_health(db)
-    status = "healthy" if db_healthy else "unhealthy"
-    return {
-        "status": status, 
-        "database": "connected" if db_healthy else "disconnected",
-        "error": db_error if not db_healthy else None,
-        "service": "Railway"
-    }
+    try:
+        db_healthy, db_error = check_database_health(db)
+        return {
+            "status": "healthy" if db_healthy else "unhealthy",
+            "database": "connected" if db_healthy else "disconnected",
+            "service": "Render",
+            "error": db_error
+        }
+    except Exception as e:
+        return {"status": "unhealthy", "error": str(e)}
 
-@app.on_event("startup")
-async def startup_event():
-    print("🚀 Movie Booking System deployed on Railway!")
-    print("📚 API Documentation: /docs")
-    print("❤️ Health Check: /health")
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=PORT)
