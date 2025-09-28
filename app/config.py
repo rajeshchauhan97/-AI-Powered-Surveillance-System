@@ -1,6 +1,5 @@
 # app/config.py
-from pydantic_settings import BaseSettings
-from typing import Optional
+from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     # Use SQLite for simplicity
