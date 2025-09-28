@@ -2,67 +2,40 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-import json
 
 from app.schemas.theater import Theater, TheaterCreate, TheaterHall, TheaterHallCreate
+from app.crud.theater import create_theater, get_theater, get_theaters, create_theater_hall, get_theater_halls, get_hall_layout
 from app.utils.database import get_db
-from app.models import Theater as TheaterModel, TheaterHall as TheaterHallModel, Seat
 
 router = APIRouter(prefix="/theaters", tags=["theaters"])
 
+@router.post("/", response_model=Theater)
+def create_new_theater(theater: TheaterCreate, db: Session = Depends(get_db)):
+    return create_theater(db=db, theater=theater)
+
 @router.get("/", response_model=List[Theater])
 def read_theaters(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    theaters = db.query(TheaterModel).offset(skip).limit(limit).all()
+    theaters = get_theaters(db, skip=skip, limit=limit)
     return theaters
 
 @router.get("/{theater_id}", response_model=Theater)
 def read_theater(theater_id: int, db: Session = Depends(get_db)):
-    theater = db.query(TheaterModel).filter(TheaterModel.id == theater_id).first()
-    if theater is None:
+    db_theater = get_theater(db, theater_id=theater_id)
+    if db_theater is None:
         raise HTTPException(status_code=404, detail="Theater not found")
-    return theater
-
-@router.post("/", response_model=Theater)
-def create_theater(theater: TheaterCreate, db: Session = Depends(get_db)):
-    db_theater = TheaterModel(**theater.model_dump())
-    db.add(db_theater)
-    db.commit()
-    db.refresh(db_theater)
     return db_theater
 
-@router.post("/halls", response_model=TheaterHall)
-def create_theater_hall(hall: TheaterHallCreate, db: Session = Depends(get_db)):
-    # Calculate total seats
-    total_seats = sum(row.total_seats for row in hall.layout)
-    
-    # Create hall
-    db_hall = TheaterHallModel(
-        theater_id=hall.theater_id,
-        name=hall.name,
-        total_seats=total_seats,
-        layout_json=json.dumps([row.model_dump() for row in hall.layout])
-    )
-    db.add(db_hall)
-    db.commit()
-    db.refresh(db_hall)
-    
-    # Create seats
-    for row_layout in hall.layout:
-        for seat_num in range(1, row_layout.total_seats + 1):
-            seat = Seat(
-                hall_id=db_hall.id,
-                row_number=row_layout.row_number,
-                seat_number=seat_num,
-                seat_type="regular"
-            )
-            db.add(seat)
-    
-    db.commit()
-    
-    return TheaterHall(
-        id=db_hall.id,
-        theater_id=db_hall.theater_id,
-        name=db_hall.name,
-        layout=hall.layout,
-        total_seats=total_seats
-    )
+@router.post("/halls/", response_model=TheaterHall)
+def create_hall(hall: TheaterHallCreate, db: Session = Depends(get_db)):
+    return create_theater_hall(db=db, hall=hall)
+
+@router.get("/{theater_id}/halls/", response_model=List[TheaterHall])
+def read_theater_halls(theater_id: int, db: Session = Depends(get_db)):
+    return get_theater_halls(db, theater_id=theater_id)
+
+@router.get("/halls/{hall_id}/layout")
+def get_hall_seat_layout(hall_id: int, db: Session = Depends(get_db)):
+    layout = get_hall_layout(db, hall_id=hall_id)
+    if not layout:
+        raise HTTPException(status_code=404, detail="Hall not found")
+    return layout
