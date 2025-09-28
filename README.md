@@ -91,10 +91,6 @@ git
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
-# Or if you want to set it only for this repository (remove --global)
-git config user.email "raju@sabhavath.com"
-git config user.name "Raju Sabhavath"
-
 # 4. Make initial commit
 git commit -m "feat: Complete Movie Booking System with all features
 
@@ -173,9 +169,4 @@ SECRET_KEY=your-secret-key
 
 MIT License
 
-```
-
----
-
-👉 Do you want me to also **fill your README with API examples (sample requests/responses for movies, bookings, theaters)** so it becomes developer-ready?
 ```
