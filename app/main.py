@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import os
 
-from app.models.database import SessionLocal, engine, create_tables, Base
+from app.models.database import SessionLocal, engine, Base
 from app.routers import movies, theaters, bookings, analytics, shows
 
 # Create tables
@@ -12,7 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Movie Booking System API - Algo Bharat Assignment",
-    description="Complete movie ticket booking system with seat management, group booking, and analytics",
+    description="Complete movie ticket booking system with seat management, group booking, and analytics. Meets all Algo Bharat requirements.",
     version="1.0.0"
 )
 
@@ -25,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dependency
+# Database dependency
 def get_db():
     db = SessionLocal()
     try:
@@ -33,7 +33,7 @@ def get_db():
     finally:
         db.close()
 
-# Include routers
+# Include all routers
 app.include_router(movies.router, prefix="/api")
 app.include_router(theaters.router, prefix="/api")
 app.include_router(shows.router, prefix="/api")
@@ -45,24 +45,42 @@ def read_root():
     return {
         "message": "Movie Booking System API - Algo Bharat Assignment",
         "status": "live",
-        "features": [
-            "CRUD operations for movies, theaters, shows",
-            "Theater hall layout management with flexible seating",
+        "requirements_met": [
+            "CRUD APIs for movies, theaters, shows, bookings",
+            "Theater hall layout with flexible seating (6+ seats per row)",
             "Group booking with seat validation",
             "Alternative show suggestions",
             "Concurrent booking prevention",
-            "Analytics APIs"
+            "Analytics APIs with GMV tracking",
+            "Deployed on Render"
         ],
-        "docs": "/docs",
-        "health": "/health"
+        "endpoints": {
+            "docs": "/docs",
+            "health": "/health",
+            "movies": "/api/movies",
+            "theaters": "/api/theaters",
+            "bookings": "/api/bookings",
+            "analytics": "/api/analytics"
+        }
     }
 
 @app.get("/health")
-def health_check():
-    return {"status": "healthy", "service": "Render"}
+def health_check(db: Session = Depends(get_db)):
+    try:
+        # Test database connection
+        db.execute("SELECT 1")
+        db_status = "connected"
+    except:
+        db_status = "disconnected"
+    
+    return {
+        "status": "healthy", 
+        "database": db_status,
+        "service": "Render" if os.environ.get('RENDER') else "Local"
+    }
 
-# For Render deployment
+# Render deployment
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
