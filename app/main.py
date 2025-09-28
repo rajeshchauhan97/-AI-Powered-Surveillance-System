@@ -1,5 +1,5 @@
 # app/main.py
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import os
@@ -83,8 +83,4 @@ def health_check(db: Session = Depends(get_db)):
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
-<<<<<<< HEAD
     uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
-=======
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=False)
->>>>>>> 27f58074d1bd026bd7866b0f9bb3fed4f08de75b
