@@ -1,74 +1,55 @@
 # 🎬 Movie Booking System - Algo Bharat Assignment
 
-A complete backend API for movie ticket booking built with **FastAPI**, **SQLAlchemy**, and **SQLite/PostgreSQL**. Deployed on **Render** for demo.
+A complete backend API for **movie ticket booking** built with **FastAPI**, **SQLAlchemy**, and **SQLite/PostgreSQL**. Deployed on **Render** for demo.
 
 ---
 
-## 🚀 Features Implemented (Algo Bharat Requirements)
+## 🚀 Features Implemented
 
-✅ **CRUD APIs** for movies, theaters, shows, bookings  
+✅ **CRUD APIs** for movies, theaters, halls, shows, and bookings  
 ✅ **Theater hall layout** with flexible seating (6+ seats per row)  
 ✅ **Group booking** with seat validation  
-✅ **Alternative show suggestions** when seats not available together  
+✅ **Alternative show suggestions** when seats are not available together  
 ✅ **Concurrent booking prevention** with database transactions  
 ✅ **Analytics APIs** with GMV tracking  
-✅ **Render deployment** with public URL  
+✅ **Render deployment** with public URL for demo  
 
 ---
 
 ## 📂 Project Architecture
 
 ```
+
 movie_booking/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application entry point
-│   ├── config.py            # Application configuration
+│   ├── **init**.py
+│   ├── main.py
 │   ├── models/
-│   │   ├── __init__.py
-│   │   └── database.py      # SQLAlchemy models (Movie, Theater, Show, Booking, Seat)
+│   │   ├── **init**.py
+│   │   └── database.py
 │   ├── schemas/
-│   │   ├── __init__.py
-│   │   ├── movie.py         # Pydantic schemas for movies
-│   │   ├── theater.py       # Pydantic schemas for theaters
-│   │   └── booking.py       # Pydantic schemas for bookings
+│   │   ├── **init**.py
+│   │   ├── movie.py
+│   │   ├── theater.py
+│   │   └── booking.py
 │   ├── routers/
-│   │   ├── __init__.py
-│   │   ├── movies.py        # Movie CRUD endpoints
-│   │   ├── theaters.py      # Theater and hall management
-│   │   ├── shows.py         # Show timing management
-│   │   ├── bookings.py      # Booking and seat selection
-│   │   └── analytics.py     # Analytics and reporting
 │   ├── crud/
-│   │   ├── __init__.py
-│   │   ├── movie.py         # Movie database operations
-│   │   ├── theater.py       # Theater database operations
-│   │   ├── show.py          # Show database operations
-│   │   └── booking.py       # Booking database operations
 │   └── utils/
-│       ├── __init__.py
-│       └── database.py      # Database connection and session management
+│       └── database.py
 ├── tests/
-│   └── test_complete_system.py  # Comprehensive system tests
-├── requirements.txt         # Python dependencies
-├── render.yaml             # Render deployment configuration
-├── main.py                 # Root-level main for Render deployment
+│   └── test_complete_system.py
+├── requirements.txt
+├── render.yaml
+├── main.py
+├── .env
+├── Dockerfile
 └── README.md
-```
+
+````
 
 ---
 
-## 🌐 Live Deployment
-
-**Live API URL:** `https://movie-booking-system-11.onrender.com`
-
-**API Documentation:** `https://movie-booking-system-11.onrender.com/docs`
-
-**Health Check:** `https://movie-booking-system-11.onrender.com/health`
-
----
-
-## 🛠️ Local Development
+## 🛠️ Local Development Setup
 
 ```bash
 # Clone repository
@@ -77,8 +58,10 @@ cd movie-booking-system
 
 # Create virtual environment
 python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/Mac
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+# source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -86,100 +69,208 @@ pip install -r requirements.txt
 # Run development server
 uvicorn app.main:app --reload
 
+# Access Swagger docs
+# http://127.0.0.1:8000/docs
+
 # Run tests
-python test_complete_system.py
+python tests/test_complete_system.py
+````
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env` file:
+
+```ini
+DATABASE_URL=sqlite:///./movie_booking.db
+SECRET_KEY=your_secret_key
+```
+
+In `app/config.py`:
+
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+SECRET_KEY = os.getenv("SECRET_KEY")
 ```
 
 ---
 
-## ☁️ Render Deployment
+## 🧪 API Testing Examples
 
-### Automatic Deployment
-- Connected to GitHub repository
-- Auto-deploys on every push to `main` branch
-- Free tier with public URL
+**1. Create Movie**
 
-### Manual Setup
-1. Go to [Render.com](https://render.com)
-2. Connect GitHub account
-3. Create new **Web Service**
-4. Connect `movie-booking-system` repository
-5. Use these settings:
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port 10000`
-   - **Environment Variables:**
-     - `DATABASE_URL`: `sqlite:///./movie_booking.db`
+```bash
+curl -X POST "http://127.0.0.1:8000/movies" \
+-H "Content-Type: application/json" \
+-d '{"title": "Inception", "duration": 148, "genre": "Sci-Fi", "rating": 8.8}'
+```
+
+**2. Create Theater**
+
+```bash
+curl -X POST "http://127.0.0.1:8000/theaters" \
+-H "Content-Type: application/json" \
+-d '{"name":"IMAX Cinema","location":"Downtown Mall"}'
+```
+
+**3. Create Hall**
+
+```bash
+curl -X POST "http://127.0.0.1:8000/halls" \
+-H "Content-Type: application/json" \
+-d '{"theater_id":1,"hall_number":1,"seats_per_row":{"A":8,"B":7,"C":9,"D":6,"E":10}}'
+```
+
+**4. Create Show**
+
+```bash
+curl -X POST "http://127.0.0.1:8000/shows" \
+-H "Content-Type: application/json" \
+-d '{"movie_id":1,"theater_id":1,"hall_id":1,"show_time":"2025-09-29T20:00:00","price":12.50}'
+```
+
+**5. Group Booking**
+
+```bash
+curl -X POST "http://127.0.0.1:8000/bookings/group" \
+-H "Content-Type: application/json" \
+-d '{"show_id":1,"user_ids":[1,2,3,4],"seats":["A1","A2","A3","A4"]}'
+```
+
+---
+
+## ☁️ Render Deployment Guide
+
+### Step 1: Push Code to GitHub
+
+```bash
+git add .
+git commit -m "Ready for Render deployment"
+git push origin main
+```
+
+### Step 2: Configure Render
+
+1. Go to [Render.com](https://render.com) → Sign up/Login
+2. Click **New Web Service** → Connect your GitHub repo
+3. Configure service:
+
+   * **Name:** `movie-booking-system`
+   * **Branch:** `main`
+   * **Runtime:** Python 3.x
+   * **Build Command:** `pip install -r requirements.txt`
+   * **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+
+Update `main.py` for Render port:
+
+```python
+import os
+import uvicorn
+from app.main import app
+
+port = int(os.environ.get("PORT", 10000))
+uvicorn.run(app, host="0.0.0.0", port=port)
+```
+
+### Step 3: Optional `render.yaml`
+
+```yaml
+services:
+  - type: web
+    name: movie-booking-system
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    autoDeploy: true
+```
+
+### Step 4: Verify Deployment
+
+```bash
+curl https://movie-booking-system.onrender.com/health
+```
+
+Access API Docs:
+`https://movie-booking-system.onrender.com/docs`
+
+---
+
+## 🐳 Optional – Docker Deployment
+
+**Dockerfile:**
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt . 
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+```
+
+Build & run:
+
+```bash
+docker build -t movie-booking .
+docker run -p 8000:8000 movie-booking
+```
 
 ---
 
 ## 📚 API Endpoints
 
-### Core Endpoints
-- `GET /` - API information and requirements
-- `GET /health` - Health check and database status
-- `GET /docs` - Interactive API documentation
+* `GET /` → API info
 
-### Movie Management
-- `GET /api/movies` - List all movies
-- `POST /api/movies` - Create new movie
-- `GET /api/movies/{id}` - Get movie details
+* `GET /health` → Health check
 
-### Theater Management
-- `GET /api/theaters` - List all theaters
-- `POST /api/theaters` - Create new theater
-- `POST /api/theaters/halls` - Create theater hall with seating layout
+* `GET /docs` → Swagger UI
 
-### Booking System
-- `POST /api/bookings/book` - Book tickets for a show
-- `POST /api/bookings/book-together` - Group booking with alternative suggestions
+* `GET /movies` → List all movies
 
-### Analytics
-- `GET /api/analytics/movie/{id}` - Movie booking analytics
-- `GET /api/analytics/theater/{id}` - Theater revenue analytics
+* `POST /movies` → Create movie
 
----
+* `GET /movies/{id}` → Movie details
 
-## 🧪 Testing the System
+* `GET /theaters` → List theaters
 
-```python
-# Run comprehensive test
-python test_complete_system.py
+* `POST /theaters` → Create theater
 
-# Test specific features:
-python test_algo_bharat_requirements.py
-```
+* `POST /halls` → Create hall
 
-Test includes:
-- Movie and theater creation
-- Hall layout with 6+ seats per row
-- Group booking with seat validation
-- Alternative show suggestions
-- Concurrent booking prevention
-- Analytics reporting
+* `POST /bookings/book` → Book tickets
+
+* `POST /bookings/group` → Group booking
+
+* `GET /analytics/movie/{id}` → Movie analytics
+
+* `GET /analytics/theater/{id}` → Theater revenue
 
 ---
 
 ## 🔧 Technology Stack
 
-- **Backend Framework:** FastAPI
-- **Database:** SQLAlchemy ORM with SQLite/PostgreSQL
-- **Validation:** Pydantic
-- **Deployment:** Render
-- **Testing:** Python unittest
-- **Version Control:** Git & GitHub
-
----
-
-## 📄 License
-
-MIT License - Algo Bharat Assignment Submission
+* **Backend:** FastAPI
+* **Database:** SQLAlchemy ORM (SQLite/PostgreSQL)
+* **Validation:** Pydantic
+* **Deployment:** Render (Free Tier)
+* **Testing:** Python unittest
+* **Version Control:** Git & GitHub
 
 ---
 
 ## 👨‍💻 Developer
 
-**Rajesh Chauhan**  
-*Algo Bharat Internship Assignment*  
+**Raju sabhavath**
+*Algo Bharat Internship Assignment*
 GitHub: [rajeshchauhan97](https://github.com/rajeshchauhan97)
 
-```

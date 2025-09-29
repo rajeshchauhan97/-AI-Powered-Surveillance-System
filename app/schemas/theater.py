@@ -1,40 +1,33 @@
-# app/schemas/theater.py
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import Dict, Optional
 
 class TheaterBase(BaseModel):
     name: str
-    address: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip_code: Optional[str] = None
+    location: str
 
 class TheaterCreate(TheaterBase):
     pass
 
-class Theater(TheaterBase):
+class TheaterResponse(TheaterBase):
     id: int
     created_at: datetime
     
     class Config:
         from_attributes = True
 
-class SeatLayout(BaseModel):
-    row_number: int
-    total_seats: int  # Must be at least 6
-
-class TheaterHallBase(BaseModel):
+class HallBase(BaseModel):
     theater_id: int
-    name: str
-    layout: List[SeatLayout]  # List of rows with seat counts
+    hall_number: int
+    seats_per_row: Dict[str, int]  # {"A": 8, "B": 7, ...}
 
-class TheaterHallCreate(TheaterHallBase):
+class HallCreate(HallBase):
     pass
 
-class TheaterHall(TheaterHallBase):
+class HallResponse(HallBase):
     id: int
-    total_seats: int
+    total_rows: int
+    created_at: datetime
     
     class Config:
         from_attributes = True

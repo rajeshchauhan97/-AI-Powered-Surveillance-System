@@ -1,40 +1,40 @@
-# app/schemas/movie.py
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional
 
 class MovieBase(BaseModel):
     title: str
-    description: Optional[str] = None
-    duration_minutes: Optional[int] = None
-    genre: Optional[str] = None
-    language: Optional[str] = None
-    release_date: Optional[datetime] = None
+    duration: int
+    genre: str
+    rating: float
 
 class MovieCreate(MovieBase):
     pass
 
-class MovieUpdate(MovieBase):
-    pass
-
-class Movie(MovieBase):
+class MovieResponse(MovieBase):
     id: int
     created_at: datetime
     
     class Config:
         from_attributes = True
 
+class MovieUpdate(BaseModel):
+    title: Optional[str] = None
+    duration: Optional[int] = None
+    genre: Optional[str] = None
+    rating: Optional[float] = None
+
 class ShowBase(BaseModel):
     movie_id: int
+    theater_id: int
     hall_id: int
-    start_time: datetime
-    end_time: datetime
+    show_time: datetime
     price: float
 
 class ShowCreate(ShowBase):
     pass
 
-class Show(ShowBase):
+class ShowResponse(ShowBase):
     id: int
     created_at: datetime
     

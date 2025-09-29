@@ -1,31 +1,32 @@
-# app/schemas/booking.py
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
-class SeatSelection(BaseModel):
-    row_number: int
-    seat_number: int
-
-class BookingRequest(BaseModel):
+class BookingBase(BaseModel):
     show_id: int
-    seat_selections: List[SeatSelection]
+    user_ids: List[int]
+    seats: List[str]
 
-class BookingResponse(BaseModel):
-    booking_id: int
-    booking_reference: str
+class BookingCreate(BookingBase):
+    pass
+
+class BookingResponse(BookingBase):
+    id: int
+    booking_id: str
     total_amount: float
-    booked_seats: List[SeatSelection]
     status: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
 
-class AlternativeShow(BaseModel):
+class GroupBookingRequest(BaseModel):
     show_id: int
-    movie_title: str
-    theater_name: str
-    hall_name: str
-    start_time: datetime
-    available_seats_together: int
+    user_ids: List[int]
+    seats: List[str]
 
-class BookingSuggestions(BaseModel):
-    original_show_unavailable: bool
-    suggestions: List[AlternativeShow]
+class GroupBookingResponse(BaseModel):
+    success: bool
+    booking: Optional[BookingResponse] = None
+    message: str
+    alternative_suggestions: List[Dict[str, Any]]
